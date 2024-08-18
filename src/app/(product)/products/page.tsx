@@ -4,6 +4,12 @@ import { ApplicationLayout } from "@/components/ApplicartionLayout/ApplicationLa
 import { Product } from "@/types/product.type";
 import { ProductList } from "./_components/ProductList";
 import { useState, useCallback } from "react";
+import dynamic from "next/dynamic";
+
+
+const CreateProduct = dynamic(() => import("../_components/CreateProduct/CreateProduct"), {
+    ssr: false
+});
 
 const myProducts: Product[] = [
     {
@@ -93,7 +99,7 @@ const AllProducts = () => {
     return (
         <ApplicationLayout onHeaderClick={menuHandler}>
             <div className="h-3/4 w-4/5 mt-16">
-                {products?.length > 0 ? <ProductList products={products} /> : <p className="text-red-400">Create Product</p>}
+                {products?.length > 0 ? <ProductList products={products} /> : <CreateProduct/>}
             </div>
         </ApplicationLayout>
     );

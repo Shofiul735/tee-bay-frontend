@@ -1,6 +1,7 @@
 import { Product } from "@/types/product.type"
 import { DeleteOutlined } from "@ant-design/icons"
 import { Button, Card } from "antd"
+import dynamic from "next/dynamic"
 import { FC } from "react"
 
 interface ProductListProps{
