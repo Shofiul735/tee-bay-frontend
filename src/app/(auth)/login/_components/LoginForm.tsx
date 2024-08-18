@@ -15,7 +15,7 @@ export const LoginForm = () => {
     }
 
     return(
-       <div className="p-8 md:p-0 w-4/5">
+       <div className="p-8 md:p-0 md:w-2/5">
             <Form
                 form={form}
                 layout={layout}
