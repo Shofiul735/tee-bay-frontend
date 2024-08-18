@@ -1,8 +1,9 @@
 import { Product } from "@/types/product.type"
 import { DeleteOutlined } from "@ant-design/icons"
-import { Button, Card } from "antd"
+import { Button, Card, Popconfirm } from "antd"
 import dynamic from "next/dynamic"
 import { FC } from "react"
+import { CardHeader } from "./CardHeader"
 
 interface ProductListProps{
     products: Product[]
@@ -16,15 +17,8 @@ export const ProductList:FC<ProductListProps> = ( {products} ) => {
 
     const content = products?.map((item)=>{
         return (
-            <Card  title={<div className="text-deep-olive" style={{ display: 'flex', alignItems: 'center' }}>
-                <h3 style={{ margin: 0 }}>{item.title}</h3>
-                <Button 
-                    type="text" 
-                    icon={<DeleteOutlined color="red"/>} 
-                    style={{ marginLeft: 'auto' }} 
-                    onClick={() => handleDelete(item.id)}
-                />
-                </div>}  
+            <Card  
+                title={<CardHeader title={item.title} id={item.id} />}  
                 bordered
                 style={{ width: '100%',margin:'10px 0' }}
                 key={item.key}
