@@ -1,38 +1,26 @@
 import { Product } from "@/types/product.type"
-import { DeleteOutlined } from "@ant-design/icons"
-import { Button, Card, Popconfirm } from "antd"
-import dynamic from "next/dynamic"
 import { FC } from "react"
-import { CardHeader } from "./CardHeader"
+import { ProductCard } from "./ProductCard";
+import Link from "next/link";
 
 interface ProductListProps{
-    products: Product[]
+    products: Product[];
+    isMyProduct: boolean;
 }
 
-export const ProductList:FC<ProductListProps> = ( {products} ) => {
+export const ProductList:FC<ProductListProps> = ( {products, isMyProduct} ) => {
 
     const handleDelete = (id: string) =>{
         console.log(id);
     }
 
     const content = products?.map((item)=>{
-        return (
-            <Card  
-                title={<CardHeader title={item.title} id={item.id} />}  
-                bordered
-                style={{ width: '100%',margin:'10px 0' }}
-                key={item.key}
-                >
-                    <p className="text-light-olive">Categories: {item.categories.join(', ')}</p>
-                    <p className="text-light-olive mb-3">Price: {item.price}, Rent: {item.rent} per day</p>
-                    <p className="text-deep-olive mb-3">
-                        {item.description}
-                    </p>
-                    <p className="text-light-olive">
-                        Date posted: {item.postedDate}
-                    </p>
-            </Card>
-        )
+        return ( 
+            <Link href={ isMyProduct ? `/myproduct/${item.id}` : `/allproduct/${item.id}`} key={item.key}>
+                <ProductCard item={item}/>
+            </Link>
+             
+        );
     })
 
     return(

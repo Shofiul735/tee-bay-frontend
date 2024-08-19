@@ -1,4 +1,3 @@
-import { Product } from "@/types/product.type";
 import { DeleteOutlined } from "@ant-design/icons";
 import { Button, Popconfirm } from "antd";
 import { FC } from "react";

@@ -17,6 +17,10 @@ const myProducts: Product[] = [
         id: 'uuid',
         title: 'A title',
         description: `A descriptionA descriptionA descriptionA descriptionA descriptionA description
+                        A descriptionA description A descriptionA descriptionA descriptionA description
+                        A descriptionA descriptionA descriptionA descriptionA descriptionA description
+                        A descriptionA description A descriptionA descriptionA descriptionA description
+                        A descriptionA descriptionA descriptionA descriptionA descriptionA description
                         A descriptionA description A descriptionA descriptionA descriptionA description`,
         categories: ['Toy', 'Food'],
         price: 500,
@@ -84,12 +88,15 @@ const allProducts: Product[] = [
 ];
 
 const AllProducts = () => {
+    const [isMyProduct,setMyProduct] = useState<boolean>(true);
     const [products, setProducts] = useState<Product[]>(myProducts);
 
     const menuHandler = useCallback((item: { key: string }) => {
         if (item.key === 'all-products') {
+            setMyProduct(false);
             setProducts(allProducts);
         } else if (item.key === 'my-products') {
+            setMyProduct(true);
             setProducts(myProducts);
         } else {
             setProducts([]);
@@ -99,7 +106,7 @@ const AllProducts = () => {
     return (
         <ApplicationLayout onHeaderClick={menuHandler}>
             <div className="h-3/4 w-4/5 mt-16">
-                {products?.length > 0 ? <ProductList products={products} /> : <CreateProduct/>}
+                {products?.length > 0 ? <ProductList products={products} isMyProduct={isMyProduct}/> : <CreateProduct/>}
             </div>
         </ApplicationLayout>
     );
