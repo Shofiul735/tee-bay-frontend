@@ -19,7 +19,7 @@ export const useLoginUser = () => {
         try {
             const { data } = await login({ variables: { email, password } });
             if (data && data.loginUser && data.loginUser.jwtToken) {
-                //localStorage.setItem("token", data.loginUser.jwtToken);
+                localStorage.setItem("jwtToken", data.loginUser.jwtToken);
 
                 router.push("/products");
             }
