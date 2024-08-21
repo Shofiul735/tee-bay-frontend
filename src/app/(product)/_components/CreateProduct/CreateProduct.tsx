@@ -4,6 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { Steps, Button, Form, Input, Select } from 'antd';
 import { useGetAllCategories } from '@/hooks/graphql/useGetAllCategories';
 import { gql, useMutation } from '@apollo/client';
+import useNotificationHook from '@/hooks/notification/useNotification';
 
 const { Step } = Steps;
 const { Option } = Select;
@@ -27,6 +28,7 @@ const StepForm = () => {
   const [dropdownData,setDropdownData] = useState([]);
   const [form] = Form.useForm();
   const [addProduct, { data :categoryData, loading:categoryLoading, error:categoryError }] = useMutation(ADD_PRODUCT);
+  const { triggerNotification, contextHolder } = useNotificationHook();
 
   useEffect(()=>{
     if(data){
@@ -148,36 +150,40 @@ const StepForm = () => {
     },
   ];
 
-  const onFinish = (values:any) => {
-    console.log('Form values:', form.getFieldsValue([
+  const onFinish = (x:any) => {
+    const values =  form.getFieldsValue([
       'productTitle',
       'categoryIds',
       'textureDescription',
       'price',
       'rentPrice',
       'rentUnit'
-    ]));
+    ]);
+    const product = {
+      productTitle: values.productTitle,
+      rentPrice: parseFloat(values.rentPrice),
+      rentUnit: values.rentUnit ?? "",
+      textureDescription: values.textureDescription,
+      price: parseFloat(values.price),
+      categoriIds: values.categoryIds
+    }
+    console.log(product);
 
     addProduct({
       variables: {
-        product: {
-          productTitle: "ABC",
-          rentPrice: 13,
-          rentUnit: "Day",
-          textureDescription: "hdhbvdhbvhd",
-          price: 120,
-          categoriIds: [1, 2, 3]
-        }
+        product
       }
     }).then(()=>{
-
-    }).catch(()=>{
-      
+        triggerNotification('success','Created','Product created successfully')
+    }).catch((err)=>{
+      triggerNotification('error','Error','Product creation failed')
     });
   };
 
   return (
-    <Form form={form} onFinish={onFinish} layout="vertical">
+    <div>
+      {contextHolder}
+      <Form form={form} onFinish={onFinish} layout="vertical">
       <Steps current={current}>
         {steps.map((item) => (
           <Step key={item.title} title={item.title} />
@@ -204,6 +210,8 @@ const StepForm = () => {
         )}
       </div>
     </Form>
+    </div>
+    
   );
 };
 
