@@ -1,12 +1,17 @@
 import { Button, Form, Input } from "antd";
 import Password from "antd/es/input/Password";
 import { useState } from "react";
+import { CreateUser } from "../../types/create-user.type";
+import { useCreateUser } from "@/hooks/graphql/useCreateUser";
+import { useRouter } from "next/navigation";
 
 const layout = 'vertical';
 
 export const SignupForm = () => {
     const [form] = Form.useForm();
-    const [loading,setLoading] = useState<boolean>(false);
+    const [formLoading,setLoading] = useState<boolean>(false);
+    const router = useRouter();
+
 
     const validatePassword = (_:any, value:string) => {
         if (!value) {
@@ -19,8 +24,20 @@ export const SignupForm = () => {
       };
 
 
-    const onFinish = () => {
+    const onFinish = (formData:CreateUser) => {
+        const {
+            createUser,
+            error,
+            data,
+            loading
+        } = useCreateUser(formData);
 
+        createUser();
+        if(data){
+            router.push('/login')
+        }else if(error){    
+            
+        }
     }
 
     return(
@@ -90,7 +107,7 @@ export const SignupForm = () => {
                     </Form.Item>
 
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" loading={loading} disabled={loading}>
+                        <Button type="primary" htmlType="submit" loading={formLoading} disabled={formLoading}>
                                 Sign up
                         </Button>
                     </Form.Item>
