@@ -1,12 +1,27 @@
 import { Button, Form, Input } from "antd";
 import Password from "antd/es/input/Password";
 import { useState } from "react";
+import useNotificationHook from "@/hooks/notification/useNotification";
+import { ApolloError, gql, useMutation } from "@apollo/client";
+import { useRouter } from "next/navigation";
 
 const layout = 'vertical';
 
+const CREATE_USER = gql`
+    mutation CreateUser($userdto: CreateUserDto!) {
+        createUser(user: $userdto) {
+            firstName
+            lastName
+        }
+    }
+`;
+
 export const SignupForm = () => {
     const [form] = Form.useForm();
-    const [loading,setLoading] = useState<boolean>(false);
+    const [formLoading,setLoading] = useState<boolean>(false);
+    const { triggerNotification, contextHolder } = useNotificationHook()
+    const [createUserMutation, { error, data, loading }]= useMutation(CREATE_USER);
+    const route = useRouter();
 
     const validatePassword = (_:any, value:string) => {
         if (!value) {
@@ -19,12 +34,28 @@ export const SignupForm = () => {
       };
 
 
-    const onFinish = () => {
+      const onFinish = async (formData: any) => {
+        delete formData['confirm-pass'];
+    
+        const payload = {variables: {
+            userdto: formData
+        }};
 
-    }
+        try {
+            const response = await createUserMutation(payload);
+            triggerNotification('success','Success', 'User created successfully');
+            route.push('/login');
+        } catch (err) {
+            const error = err as ApolloError;
+            const message = error.graphQLErrors?.[0]?.message || error.message || 'Failed to create user';
+            triggerNotification('error','Error' ,message);
+        }
+    };
+    
 
     return(
         <div>
+            {contextHolder}
                <Form
                     form={form}
                     onFinish={onFinish}
@@ -58,7 +89,7 @@ export const SignupForm = () => {
                     <div className="flex flex-row gap-2 justify-between">
                         <Form.Item
                             label="Email"
-                            name="eamil"
+                            name="email"
                             rules={[{ required: true, message: 'Email is required!' }]}
                             >
                             <Input type="email" placeholder="Enter your email"/>
@@ -80,7 +111,7 @@ export const SignupForm = () => {
                     </Form.Item>
                     <Form.Item
                         label="Confirm Password"
-                        name=""
+                        name="confirm-pass"
                         rules={[
                             { required: true, message: `Confirm Password can't be empty` },
                             { validator: validatePassword }
@@ -90,7 +121,7 @@ export const SignupForm = () => {
                     </Form.Item>
 
                     <Form.Item>
-                        <Button type="primary" htmlType="submit" loading={loading} disabled={loading}>
+                        <Button type="primary" htmlType="submit" loading={formLoading} disabled={formLoading}>
                                 Sign up
                         </Button>
                     </Form.Item>

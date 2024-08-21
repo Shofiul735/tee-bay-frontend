@@ -1,5 +1,6 @@
 "use client"
 
+import { useLoginUser } from "@/hooks/graphql/useLoginUser";
 import { Form,Input,Checkbox, Button } from "antd"
 import Link from "next/link";
 import { useState } from "react";
@@ -9,9 +10,16 @@ const layout = 'vertical';
 export const LoginForm = () => {
     const [form] = Form.useForm();
     const [loading,setLoading] = useState<boolean>(false);
+    const {
+        handleLogin,
+        loading: loginLoading,
+        error,
+        data,
+    } = useLoginUser();
 
-    const onFinish = () => {
 
+    const onFinish = async(data:{email:string,password:string}) => {
+        await handleLogin(data.email, data.password);
     }
 
     return(

@@ -9,3 +9,4 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=development
+      - NEXT_PUBLIC_Graphql_Source=http://localhost:4000/graphql
